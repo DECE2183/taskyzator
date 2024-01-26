@@ -161,17 +161,42 @@ func (m *Model) Update(message tea.Msg) (*Model, tea.Cmd) {
 	switch {
 	case controls.NewTask.Contains(keypress):
 		cmd = model.Cmd(NEW_TASK)
-	case controls.DoneTask.Contains(keypress) && isItem && item.task != nil && item.task.Status == tasks.ACTIVE:
+	case controls.DoneTask.Contains(keypress):
+		if !isItem || item.task == nil || item.task.Status != tasks.ACTIVE {
+			return m, nil
+		}
+
 		err := tasks.Done(item.task)
 		if err != nil {
 			return m, model.Error(err)
 		}
+
 		m.sortTasks()
-	case controls.ArchiveTask.Contains(keypress) && isItem && item.task != nil && item.task.Status == tasks.DONE:
-		err := tasks.Archive(item.task)
-		if err != nil {
-			return m, model.Error(err)
+	case controls.ArchiveTask.Contains(keypress):
+		if !isItem {
+			return m, nil
 		}
+
+		if item.task != nil {
+			if item.task.Status != tasks.DONE {
+				return m, nil
+			}
+
+			err := tasks.Archive(item.task)
+			if err != nil {
+				return m, model.Error(err)
+			}
+		} else {
+			items := m.list.Items()
+			for i := m.list.Index() + 1; i < len(items)-1; i++ {
+				tsk := items[i].(Item)
+				if tsk.task == nil {
+					break
+				}
+				tasks.Archive(tsk.task)
+			}
+		}
+
 		m.sortTasks()
 	case controls.CursorUp.Contains(keypress):
 		m.list, cmd = m.list.Update(msg)
