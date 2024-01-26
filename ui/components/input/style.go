@@ -8,6 +8,6 @@ import (
 
 var (
 	inputTextStyle  = lipgloss.NewStyle().MarginBottom(1)
-	inputTitleStyle = inputTextStyle.Copy().Foreground(style.NormalTextColor)
+	inputTitleStyle = inputTextStyle.Copy().Foreground(style.NormalColor)
 	inputBoxStyle   = style.RoundedBorder.Copy().BorderForeground(style.ArchivedTaskTextColor).Width(90)
 )

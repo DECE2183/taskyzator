@@ -1,6 +1,10 @@
 package style
 
-import "github.com/charmbracelet/lipgloss"
+import (
+	"taskyzator/config"
+
+	"github.com/charmbracelet/lipgloss"
+)
 
 const (
 	DoneIcon    = "✔"
@@ -8,15 +12,17 @@ const (
 )
 
 var (
-	ErrorColor            = lipgloss.Color("#F33")
-	AccentColor           = lipgloss.Color("#0cc47e")
-	DimmedColor           = lipgloss.Color("#a3a3a3")
-	ActiveTaskTextColor   = lipgloss.Color("#f7fffc")
-	DoneTaskTextColor     = lipgloss.Color("#6ca690")
-	ArchivedTaskTextColor = lipgloss.Color("#7d7d7d")
-	NormalTextColor       = lipgloss.Color("#FFFFFF")
+	ErrorColor            = lipgloss.Color(config.Current.Style.ErrorColor)
+	AccentColor           = lipgloss.Color(config.Current.Style.AccentColor)
+	DimmedColor           = lipgloss.Color(config.Current.Style.DimmedColor)
+	NormalColor           = lipgloss.Color(config.Current.Style.NormalColor)
+	ActiveTaskTextColor   = lipgloss.Color(config.Current.Style.ActiveTaskTextColor)
+	DoneTaskTextColor     = lipgloss.Color(config.Current.Style.DoneTaskTextColor)
+	ArchivedTaskTextColor = lipgloss.Color(config.Current.Style.ArchivedTaskTextColor)
 )
 
 var (
+	NormalText    = lipgloss.NewStyle().Foreground(NormalColor)
+	DimmedText    = lipgloss.NewStyle().Foreground(DimmedColor)
 	RoundedBorder = lipgloss.NewStyle().Border(lipgloss.RoundedBorder(), true).BorderForeground(AccentColor).Padding(0, 1)
 )

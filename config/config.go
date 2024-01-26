@@ -52,19 +52,27 @@ func load() (Config, error) {
 
 	newControls := reflect.ValueOf(&newConfig.Controls).Elem()
 	defaultControls := reflect.ValueOf(defaultConfig.Controls)
-	for i := 0; i < newControls.NumField(); i++ {
-		newField := newControls.Field(i)
-		defaultField := defaultControls.Field(i)
-		if newField.Len() == 0 {
-			newField.SetString(defaultField.String())
-		}
-	}
+	fillStruct(defaultControls, newControls)
+
+	newStyle := reflect.ValueOf(&newConfig.Style).Elem()
+	defaultStyle := reflect.ValueOf(defaultConfig.Style)
+	fillStruct(defaultStyle, newStyle)
 
 	if newConfig.Controls.Quit == "" {
 		newConfig.Controls.Quit = defaultConfig.Controls.Quit
 	}
 
 	return newConfig, nil
+}
+
+func fillStruct(defaultStruct, newStruct reflect.Value) {
+	for i := 0; i < newStruct.NumField(); i++ {
+		newField := newStruct.Field(i)
+		defaultField := defaultStruct.Field(i)
+		if newField.Len() == 0 {
+			newField.SetString(defaultField.String())
+		}
+	}
 }
 
 func save(conf Config) error {

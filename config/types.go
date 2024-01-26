@@ -51,6 +51,16 @@ func (k Key) Contains(keyName string) bool {
 	return slices.Contains(keys, keyName)
 }
 
+type Style struct {
+	ErrorColor            string `yaml:"error-color"`
+	AccentColor           string `yaml:"accent-color"`
+	DimmedColor           string `yaml:"dimmed-color"`
+	NormalColor           string `yaml:"normal-color"`
+	ActiveTaskTextColor   string `yaml:"active-task-text-color"`
+	DoneTaskTextColor     string `yaml:"done-task-text-color"`
+	ArchivedTaskTextColor string `yaml:"archived-task-text-color"`
+}
+
 type Controls struct {
 	// Main control
 	Quit       Key `yaml:"quit"`
@@ -66,6 +76,7 @@ type Controls struct {
 
 type Config struct {
 	Controls Controls `yaml:"controls"`
+	Style    Style    `yaml:"style"`
 }
 
 var defaultConfig = Config{
@@ -78,5 +89,14 @@ var defaultConfig = Config{
 		NewTask:     "ctrl+n",
 		DoneTask:    "enter",
 		ArchiveTask: "delete",
+	},
+	Style: Style{
+		ErrorColor:            "#F33",
+		AccentColor:           "#0cc47e",
+		DimmedColor:           "#a3a3a3",
+		NormalColor:           "#f2f2f2",
+		ActiveTaskTextColor:   "#f7fffc",
+		DoneTaskTextColor:     "#6ca690",
+		ArchivedTaskTextColor: "#7d7d7d",
 	},
 }
