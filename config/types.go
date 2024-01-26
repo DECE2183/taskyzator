@@ -18,6 +18,7 @@ func (k Key) prepareToProccess() string {
 	s = strings.ReplaceAll(s, "↓", "down")
 	s = strings.ReplaceAll(s, "←", "left")
 	s = strings.ReplaceAll(s, "→", "right")
+	s = strings.ReplaceAll(s, "del", "delete")
 	return s
 }
 
@@ -27,6 +28,7 @@ func (k Key) prepareToDisplay() string {
 	s = strings.ReplaceAll(s, "down", "↓")
 	s = strings.ReplaceAll(s, "left", "←")
 	s = strings.ReplaceAll(s, "right", "→")
+	s = strings.ReplaceAll(s, "delete", "del")
 	return s
 }
 
@@ -72,6 +74,7 @@ type Controls struct {
 	NewTask     Key `yaml:"new-task"`
 	DoneTask    Key `yaml:"done-task"`
 	ArchiveTask Key `yaml:"archive-task"`
+	DeleteTask  Key `yaml:"delete-task"`
 }
 
 type Config struct {
@@ -88,7 +91,8 @@ var defaultConfig = Config{
 		CursorDown:  "down,k",
 		NewTask:     "ctrl+n",
 		DoneTask:    "enter",
-		ArchiveTask: "delete",
+		ArchiveTask: "del",
+		DeleteTask:  "shift+del",
 	},
 	Style: Style{
 		ErrorColor:            "#F33",

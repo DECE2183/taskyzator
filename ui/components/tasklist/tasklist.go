@@ -114,8 +114,8 @@ type Model struct {
 	width, height int
 }
 
-func New() Model {
-	m := Model{}
+func New() *Model {
+	m := &Model{}
 
 	controls := config.Current.Controls
 
@@ -138,15 +138,15 @@ func New() Model {
 	return m
 }
 
-func (m Model) Init() tea.Cmd {
+func (m *Model) Init() tea.Cmd {
 	return nil
 }
 
-func (m Model) View() string {
+func (m *Model) View() string {
 	return m.list.View()
 }
 
-func (m Model) Update(message tea.Msg) (Model, tea.Cmd) {
+func (m *Model) Update(message tea.Msg) (*Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	msg, isKeyMessage := message.(tea.KeyMsg)
@@ -252,6 +252,15 @@ func (m *Model) keymap() []key.Binding {
 				bindings = append(bindings, key.NewBinding(controls.DoneTask.Binding(), controls.DoneTask.Help("done")))
 			case tasks.DONE:
 				bindings = append(bindings, key.NewBinding(controls.ArchiveTask.Binding(), controls.ArchiveTask.Help("archive")))
+			case tasks.ARCHIVED:
+				bindings = append(bindings, key.NewBinding(controls.DeleteTask.Binding(), controls.DeleteTask.Help("permanet delete")))
+			}
+		} else {
+			switch selectedItem.itemType {
+			case _ITEM_DONE:
+				bindings = append(bindings, key.NewBinding(controls.ArchiveTask.Binding(), controls.ArchiveTask.Help("archive all")))
+			case _ITEM_ARCHIVE:
+				bindings = append(bindings, key.NewBinding(controls.DeleteTask.Binding(), controls.DeleteTask.Help("permanet delete all")))
 			}
 		}
 	}

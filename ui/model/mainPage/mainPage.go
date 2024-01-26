@@ -15,8 +15,8 @@ type Model struct {
 	program       *tea.Program
 	width, height int
 	inNewTaskMode bool
-	tasklist      tasklist.Model
-	taskNameInput input.Model
+	tasklist      *tasklist.Model
+	taskNameInput *input.Model
 }
 
 func New() *Model {

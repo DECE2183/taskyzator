@@ -49,8 +49,8 @@ type Model struct {
 	title string
 }
 
-func New(title string) Model {
-	m := Model{
+func New(title string) *Model {
+	m := &Model{
 		title: title,
 	}
 
@@ -63,11 +63,11 @@ func New(title string) Model {
 	return m
 }
 
-func (m Model) Init() tea.Cmd {
+func (m *Model) Init() tea.Cmd {
 	return nil
 }
 
-func (m Model) View() string {
+func (m *Model) View() string {
 	body := lipgloss.JoinVertical(
 		lipgloss.Left,
 		inputTitleStyle.Render(m.title),
@@ -78,7 +78,7 @@ func (m Model) View() string {
 	return body
 }
 
-func (m Model) Update(message tea.Msg) (Model, tea.Cmd) {
+func (m *Model) Update(message tea.Msg) (*Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	msg, isKeyMessage := message.(tea.KeyMsg)
