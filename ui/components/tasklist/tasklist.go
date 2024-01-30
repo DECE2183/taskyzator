@@ -161,22 +161,20 @@ func (m *Model) Update(message tea.Msg) (*Model, tea.Cmd) {
 	switch {
 	case controls.NewTask.Contains(keypress):
 		cmd = model.Cmd(NEW_TASK)
-	case controls.DoneTask.Contains(keypress):
-		if !isItem || item.task == nil || item.task.Status != tasks.ACTIVE {
-			return m, nil
-		}
-
+	case controls.DoneTask.Contains(keypress) && isItem && item.task != nil && item.task.Status == tasks.ACTIVE:
 		err := tasks.Done(item.task)
 		if err != nil {
 			return m, model.Error(err)
 		}
-
 		m.sortTasks()
-	case controls.ArchiveTask.Contains(keypress):
-		if !isItem {
-			return m, nil
+	case controls.UndoneTask.Contains(keypress) && isItem && item.task != nil && item.task.Status == tasks.DONE:
+		err := tasks.Undone(item.task)
+		if err != nil {
+			return m, model.Error(err)
 		}
-
+		m.sortTasks()
+		m.list.CursorDown()
+	case controls.ArchiveTask.Contains(keypress) && isItem:
 		if item.task != nil {
 			if item.task.Status != tasks.DONE {
 				return m, nil
@@ -187,6 +185,10 @@ func (m *Model) Update(message tea.Msg) (*Model, tea.Cmd) {
 				return m, model.Error(err)
 			}
 		} else {
+			if item.itemType != _ITEM_DONE {
+				return m, nil
+			}
+
 			items := m.list.Items()
 			for i := m.list.Index() + 1; i < len(items)-1; i++ {
 				tsk := items[i].(Item)
@@ -196,16 +198,51 @@ func (m *Model) Update(message tea.Msg) (*Model, tea.Cmd) {
 				tasks.Archive(tsk.task)
 			}
 		}
-
 		m.sortTasks()
+	case controls.UnarchiveTask.Contains(keypress) && isItem && item.task != nil && item.task.Status == tasks.ARCHIVED:
+		err := tasks.Unarchive(item.task)
+		if err != nil {
+			return m, model.Error(err)
+		}
+		m.sortTasks()
+		m.list.CursorDown()
+	case controls.DeleteTask.Contains(keypress) && isItem:
+		if item.task != nil {
+			if item.task.Status != tasks.ARCHIVED {
+				return m, nil
+			}
+
+			err := tasks.Delete(item.task)
+			if err != nil {
+				return m, model.Error(err)
+			}
+		} else {
+			if item.itemType != _ITEM_ARCHIVE {
+				return m, nil
+			}
+
+			err := tasks.DeleteArchived()
+			if err != nil {
+				return m, model.Error(err)
+			}
+		}
+		m.sortTasks()
+
 	case controls.CursorUp.Contains(keypress):
 		m.list, cmd = m.list.Update(msg)
 		cmd = tea.Batch(cmd, model.Cmd(CURSOR_UP))
+		return m, cmd
 	case controls.CursorDown.Contains(keypress):
 		m.list, cmd = m.list.Update(msg)
 		cmd = tea.Batch(cmd, model.Cmd(CURSOR_DOWN))
+		return m, cmd
 	default:
 		m.list, cmd = m.list.Update(msg)
+		return m, cmd
+	}
+
+	if m.list.Index() >= len(m.list.Items()) || m.list.SelectedItem().(Item).task == nil {
+		m.list.CursorUp()
 	}
 
 	return m, cmd
@@ -226,8 +263,9 @@ func (m *Model) NewTask(name string) tea.Cmd {
 }
 
 func (m *Model) sortTasks() {
-	taskList := m.list.Items()
+	taskList := tasks.List()
 	if len(taskList) == 0 {
+		m.list.SetItems(nil)
 		return
 	}
 
@@ -236,31 +274,26 @@ func (m *Model) sortTasks() {
 	archive_tasks := make([]list.Item, 0, len(taskList)/2)
 
 	for _, item := range taskList {
-		tsk := item.(Item)
-		if tsk.itemType != _ITEM_TASK {
-			continue
-		}
-
-		switch tsk.task.Status {
+		switch item.Status {
 		case tasks.ACTIVE:
-			active_tasks = append(active_tasks, tsk)
+			active_tasks = append(active_tasks, Item{task: item})
 		case tasks.DONE:
-			done_tasks = append(done_tasks, tsk)
+			done_tasks = append(done_tasks, Item{task: item})
 		case tasks.ARCHIVED:
-			archive_tasks = append(archive_tasks, tsk)
+			archive_tasks = append(archive_tasks, Item{task: item})
 		}
 	}
 
-	taskList = taskList[:0]
-	taskList = append(taskList, active_tasks...)
+	itemList := make([]list.Item, 0, len(active_tasks)+len(done_tasks)+len(archive_tasks)+2)
+	itemList = append(itemList, active_tasks...)
 
-	taskList = append(taskList, Item{itemType: _ITEM_DONE})
-	taskList = append(taskList, done_tasks...)
+	itemList = append(itemList, Item{itemType: _ITEM_DONE})
+	itemList = append(itemList, done_tasks...)
 
-	taskList = append(taskList, Item{itemType: _ITEM_ARCHIVE})
-	taskList = append(taskList, archive_tasks...)
+	itemList = append(itemList, Item{itemType: _ITEM_ARCHIVE})
+	itemList = append(itemList, archive_tasks...)
 
-	m.list.SetItems(taskList)
+	m.list.SetItems(itemList)
 }
 
 func (m *Model) keymap() []key.Binding {
@@ -269,15 +302,17 @@ func (m *Model) keymap() []key.Binding {
 		key.NewBinding(controls.NewTask.Binding(), controls.NewTask.Help("new")),
 	}
 
-	if len(m.list.Items()) > 0 {
-		selectedItem := m.list.SelectedItem().(Item)
+	selectedItem, isItem := m.list.SelectedItem().(Item)
+	if len(m.list.Items()) > 0 && isItem {
 		if selectedItem.task != nil {
 			switch selectedItem.task.Status {
 			case tasks.ACTIVE:
 				bindings = append(bindings, key.NewBinding(controls.DoneTask.Binding(), controls.DoneTask.Help("done")))
 			case tasks.DONE:
+				bindings = append(bindings, key.NewBinding(controls.UndoneTask.Binding(), controls.UndoneTask.Help("undone")))
 				bindings = append(bindings, key.NewBinding(controls.ArchiveTask.Binding(), controls.ArchiveTask.Help("archive")))
 			case tasks.ARCHIVED:
+				bindings = append(bindings, key.NewBinding(controls.UnarchiveTask.Binding(), controls.UnarchiveTask.Help("unarchive")))
 				bindings = append(bindings, key.NewBinding(controls.DeleteTask.Binding(), controls.DeleteTask.Help("permanet delete")))
 			}
 		} else {

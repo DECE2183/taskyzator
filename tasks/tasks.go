@@ -1,6 +1,7 @@
 package tasks
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"taskyzator/config"
@@ -115,5 +116,52 @@ func Undone(task *Task) error {
 
 func Archive(task *Task) error {
 	task.Status = ARCHIVED
+	return Save()
+}
+
+func Unarchive(task *Task) error {
+	task.Status = DONE
+	return Save()
+}
+
+func Delete(task *Task) error {
+	for i := range taskList {
+		if taskList[i] == task {
+			switch i {
+			case 0:
+				taskList = taskList[i+1:]
+			case len(taskList) - 1:
+				taskList = taskList[:len(taskList)-1]
+			default:
+				taskList = append(taskList[:i], taskList[i+1:]...)
+			}
+			return Save()
+		}
+	}
+	return fmt.Errorf("task not found")
+}
+
+func DeleteArchived() error {
+	i := 0
+	for i < len(taskList) {
+		if taskList[i].Status != ARCHIVED {
+			continue
+		}
+
+		if len(taskList) == 1 {
+			taskList = taskList[0:0]
+			break
+		}
+
+		switch i {
+		case 0:
+			taskList = taskList[i+1:]
+		case len(taskList) - 1:
+			taskList = taskList[:len(taskList)-1]
+		default:
+			taskList = append(taskList[:i], taskList[i+1:]...)
+		}
+		i++
+	}
 	return Save()
 }

@@ -71,10 +71,12 @@ type Controls struct {
 	CursorUp   Key `yaml:"cursor-up"`
 	CursorDown Key `yaml:"cursor-down"`
 	// tasks
-	NewTask     Key `yaml:"new-task"`
-	DoneTask    Key `yaml:"done-task"`
-	ArchiveTask Key `yaml:"archive-task"`
-	DeleteTask  Key `yaml:"delete-task"`
+	NewTask       Key `yaml:"new-task"`
+	DoneTask      Key `yaml:"done-task"`
+	UndoneTask    Key `yaml:"undone-task"`
+	ArchiveTask   Key `yaml:"archive-task"`
+	UnarchiveTask Key `yaml:"unarchive-task"`
+	DeleteTask    Key `yaml:"delete-task"`
 }
 
 type Config struct {
@@ -84,15 +86,17 @@ type Config struct {
 
 var defaultConfig = Config{
 	Controls: Controls{
-		Quit:        "ctrl+q,ctrl+c",
-		Apply:       "enter",
-		Cancel:      "esc",
-		CursorUp:    "up,j",
-		CursorDown:  "down,k",
-		NewTask:     "ctrl+n",
-		DoneTask:    "enter",
-		ArchiveTask: "del",
-		DeleteTask:  "shift+del",
+		Quit:          "ctrl+q,ctrl+c",
+		Apply:         "enter",
+		Cancel:        "esc",
+		CursorUp:      "up,j",
+		CursorDown:    "down,k",
+		NewTask:       "ctrl+n",
+		DoneTask:      "enter",
+		UndoneTask:    "ctrl+u",
+		ArchiveTask:   "del",
+		UnarchiveTask: "ctrl+u",
+		DeleteTask:    "shift+del",
 	},
 	Style: Style{
 		ErrorColor:            "#F33",
