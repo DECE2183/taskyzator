@@ -96,7 +96,7 @@ var defaultConfig = Config{
 		UndoneTask:    "ctrl+u",
 		ArchiveTask:   "del",
 		UnarchiveTask: "ctrl+u",
-		DeleteTask:    "shift+del",
+		DeleteTask:    "shift+del,alt+insert",
 	},
 	Style: Style{
 		ErrorColor:            "#F33",
