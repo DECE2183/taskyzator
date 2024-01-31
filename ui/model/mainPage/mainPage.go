@@ -24,7 +24,7 @@ func New() *Model {
 	p := tea.NewProgram(m, tea.WithAltScreen(), tea.WithMouseCellMotion())
 	m.program = p
 	m.tasklist = tasklist.New()
-	m.taskNameInput = input.New("new task")
+	m.taskNameInput = input.New("enter new task name:")
 	return m
 }
 
