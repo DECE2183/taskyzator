@@ -1,8 +1,8 @@
 package input
 
 import (
-	"taskyzator/config"
-	"taskyzator/ui/model"
+	"github.com/dece2183/taskyzator/config"
+	"github.com/dece2183/taskyzator/ui/model"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"

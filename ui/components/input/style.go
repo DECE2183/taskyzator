@@ -1,7 +1,7 @@
 package input
 
 import (
-	"taskyzator/ui/style"
+	"github.com/dece2183/taskyzator/ui/style"
 
 	"github.com/charmbracelet/lipgloss"
 )

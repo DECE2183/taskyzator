@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"taskyzator/config"
 	"time"
+
+	"github.com/dece2183/taskyzator/config"
 
 	"gopkg.in/yaml.v3"
 )

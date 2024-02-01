@@ -1,9 +1,9 @@
 package mainpage
 
 import (
-	"taskyzator/config"
-	"taskyzator/ui/components/input"
-	"taskyzator/ui/components/tasklist"
+	"github.com/dece2183/taskyzator/config"
+	"github.com/dece2183/taskyzator/ui/components/input"
+	"github.com/dece2183/taskyzator/ui/components/tasklist"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -23,7 +23,7 @@ func New() *Model {
 	m := &Model{}
 	p := tea.NewProgram(m, tea.WithAltScreen(), tea.WithMouseCellMotion())
 	m.program = p
-	m.tasklist = tasklist.New()
+	m.tasklist = tasklist.New("taskyzator")
 	m.taskNameInput = input.New("enter new task name:")
 	return m
 }

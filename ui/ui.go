@@ -1,8 +1,8 @@
 package ui
 
 import (
-	"taskyzator/ui/model"
-	mainpage "taskyzator/ui/model/mainPage"
+	"github.com/dece2183/taskyzator/ui/model"
+	mainpage "github.com/dece2183/taskyzator/ui/model/mainPage"
 )
 
 func Run() {

@@ -3,11 +3,12 @@ package tasklist
 import (
 	"fmt"
 	"io"
-	"taskyzator/config"
-	"taskyzator/tasks"
-	"taskyzator/ui/model"
-	"taskyzator/ui/style"
 	"time"
+
+	"github.com/dece2183/taskyzator/config"
+	"github.com/dece2183/taskyzator/tasks"
+	"github.com/dece2183/taskyzator/ui/model"
+	"github.com/dece2183/taskyzator/ui/style"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
@@ -114,13 +115,13 @@ type Model struct {
 	width, height int
 }
 
-func New() *Model {
+func New(title string) *Model {
 	m := &Model{}
 
 	controls := config.Current.Controls
 
 	m.list = list.New([]list.Item{}, ItemDelegate{}, 512, 512)
-	m.list.Title = "tasks"
+	m.list.Title = title
 	m.list.Styles.Title = titleStyle
 	m.list.KeyMap = list.KeyMap{
 		CursorUp:   key.NewBinding(controls.CursorUp.Binding(), controls.CursorUp.Help("up")),

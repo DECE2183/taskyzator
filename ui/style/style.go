@@ -1,7 +1,7 @@
 package style
 
 import (
-	"taskyzator/config"
+	"github.com/dece2183/taskyzator/config"
 
 	"github.com/charmbracelet/lipgloss"
 )
