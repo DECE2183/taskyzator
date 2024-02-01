@@ -83,7 +83,8 @@ func (m *Model) Update(message tea.Msg) (*Model, tea.Cmd) {
 
 	msg, isKeyMessage := message.(tea.KeyMsg)
 	if !isKeyMessage {
-		return m, nil
+		m.input, cmd = m.input.Update(message)
+		return m, cmd
 	}
 
 	controls := config.Current.Controls
@@ -100,7 +101,7 @@ func (m *Model) Update(message tea.Msg) (*Model, tea.Cmd) {
 		m.input.Reset()
 		m.input.Blur()
 	default:
-		m.input, cmd = m.input.Update(message)
+		m.input, cmd = m.input.Update(msg)
 	}
 
 	return m, cmd

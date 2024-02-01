@@ -95,6 +95,12 @@ func (m *Model) Update(message tea.Msg) (tea.Model, tea.Cmd) {
 			cmds = append(cmds, cmd)
 		}
 		m.inNewTaskMode = false
+
+	default:
+		if m.inNewTaskMode {
+			m.taskNameInput, cmd = m.taskNameInput.Update(msg)
+			cmds = append(cmds, cmd)
+		}
 	}
 
 	return m, tea.Batch(cmds...)
